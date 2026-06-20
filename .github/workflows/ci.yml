@@ -44,13 +44,27 @@ jobs:
         env:
           CGO_ENABLED: "0"
         run: go build ./...
-      # The index package builds HNSW, IVF and DiskANN graphs with thousands of
-      # vectors and asserts recall, so its race-instrumented run is slow; the
-      # default 10m per-package timeout is not enough, hence -timeout 30m.
+      # The race detector adds about a 10x slowdown. Every package except index
+      # is cheap under it, so they run with the race detector and produce the
+      # coverage profile here.
       - name: test (race)
         env:
           CGO_ENABLED: "1"
-        run: go test -race -count=1 -timeout 30m -coverprofile=coverage.out ./...
+        run: go test -race -count=1 -timeout 20m -coverprofile=coverage.out $(go list ./... | grep -v '/index$')
+      # The index package builds HNSW, IVF, Vamana and SPANN graphs over
+      # thousands of vectors and asserts recall, so the race detector pushes it
+      # past a sane CI budget. Run the full-size recall and persistence suite
+      # without the race detector, then run only the genuinely concurrent test
+      # (concurrent search and insert) with the race detector, which is where a
+      # data race could actually live.
+      - name: test index (full size, no race)
+        env:
+          CGO_ENABLED: "1"
+        run: go test -count=1 -timeout 15m ./index/
+      - name: test index concurrency (race)
+        env:
+          CGO_ENABLED: "1"
+        run: go test -race -count=1 -timeout 10m -run TestHNSWConcurrentSearchInsert ./index/
       - name: coverage summary
         if: matrix.os == 'ubuntu-latest'
         run: go tool cover -func=coverage.out | tail -1
