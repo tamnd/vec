@@ -67,15 +67,17 @@ jobs:
         with:
           version: latest
 
-  # Scan the module and its dependencies for known vulnerabilities.
+  # Scan the module and its dependencies for known vulnerabilities. This job
+  # uses the latest stable Go rather than the module's pinned 1.23, since the
+  # govulncheck tool tracks a recent toolchain; it still analyzes a go1.23
+  # module correctly.
   govulncheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
-          go-version-file: go.mod
-          check-latest: true
+          go-version: stable
           cache: true
       - name: govulncheck
         run: |
