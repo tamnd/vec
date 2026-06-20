@@ -209,13 +209,13 @@ func halfToFloatBits(h uint16) uint32 {
 	sign := uint32(h&0x8000) << 16
 	exp := uint32(h>>10) & 0x1f
 	mant := uint32(h & 0x3ff)
-	switch {
-	case exp == 0:
+	switch exp {
+	case 0:
 		if mant == 0 {
 			return sign
 		}
 		return sign | (mant << 13) | (uint32(127-15+1) << 23)
-	case exp == 0x1f:
+	case 0x1f:
 		return sign | 0x7f800000 | (mant << 13)
 	default:
 		return sign | ((exp + (127 - 15)) << 23) | (mant << 13)

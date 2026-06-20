@@ -213,7 +213,7 @@ func (qb *QueryBuilder) All(ctx context.Context) ([]Result, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	var out []Result
 	for rows.Next() {
 		out = append(out, rows.Result())
@@ -230,7 +230,7 @@ func (qb *QueryBuilder) First(ctx context.Context) (Result, error) {
 	if err != nil {
 		return Result{}, err
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 	if !rows.Next() {
 		if err := rows.Err(); err != nil {
 			return Result{}, err
