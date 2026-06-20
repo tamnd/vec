@@ -126,14 +126,14 @@ func Create(fs vfs.FS, path string, opts Options) (*WAL, error) {
 		tailOff:  headerSize,
 	}
 	if err := w.writeHeader(); err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	// The chain seeds from the header checksum so a frame cannot be lifted from a
 	// different WAL generation and still chain.
 	w.lastSum = w.headerChecksum()
 	if err := f.Sync(vfs.SyncFull); err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	return w, nil
@@ -153,12 +153,12 @@ func Open(fs vfs.FS, path string, opts Options) (*WAL, RecoverResult, error) {
 	}
 	size, err := f.Size()
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, RecoverResult{}, err
 	}
 	res, err := Recover(f.ReadAt, size)
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, RecoverResult{}, err
 	}
 	w := &WAL{

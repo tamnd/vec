@@ -158,7 +158,7 @@ func (e *Executor) denseRanked(ec *ExecContext, plan PhysicalPlan, vector []floa
 	if err := root.Open(ec); err != nil {
 		return nil, err
 	}
-	defer root.Close()
+	defer func() { _ = root.Close() }()
 
 	var out []hybrid.ScoredPos
 	var b Batch

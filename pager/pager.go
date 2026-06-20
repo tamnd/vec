@@ -107,11 +107,11 @@ func Create(fs vfs.FS, path string, opts Options) (*Pager, error) {
 	page1 := make([]byte, ps)
 	h.Encode(page1)
 	if _, err := f.WriteAt(page1, 0); err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	if err := f.Sync(vfs.SyncFull); err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	return p, nil
@@ -126,17 +126,17 @@ func Open(fs vfs.FS, path string, opts Options) (*Pager, error) {
 	}
 	hbuf := make([]byte, format.HeaderSize)
 	if _, err := f.ReadAt(hbuf, 0); err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, fmt.Errorf("pager: read header: %w", err)
 	}
 	h, err := format.DecodeHeader(hbuf)
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	size, err := f.Size()
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	ps := h.PageSize
@@ -147,7 +147,7 @@ func Open(fs vfs.FS, path string, opts Options) (*Pager, error) {
 		p.dbSize = 1
 	}
 	if err := p.loadFreelist(); err != nil {
-		f.Close()
+		_ = f.Close()
 		return nil, err
 	}
 	return p, nil

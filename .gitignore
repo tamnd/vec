@@ -12,3 +12,7 @@
 # Editor and OS noise
 .DS_Store
 *.swp
+
+# Local Go workspace file (single-module repo; not shared)
+go.work
+go.work.sum
