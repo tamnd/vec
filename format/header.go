@@ -34,7 +34,7 @@ const WriterVersion = 1
 type EncryptionKind byte
 
 const (
-	EncNone EncryptionKind = 0
+	EncNone      EncryptionKind = 0
 	EncAES256GCM EncryptionKind = 1
 )
 
@@ -43,9 +43,9 @@ const (
 type ChecksumAlgo byte
 
 const (
-	ChecksumNone ChecksumAlgo = 0
+	ChecksumNone   ChecksumAlgo = 0
 	ChecksumCRC32C ChecksumAlgo = 1
-	ChecksumXXH64 ChecksumAlgo = 2
+	ChecksumXXH64  ChecksumAlgo = 2
 )
 
 // Header feature flag bits (offset 72, spec 03 §4.3).
@@ -63,26 +63,26 @@ const (
 // Header is the decoded 100-byte database header (spec 03 §3.2). Field order and
 // the offsets below follow the normative table exactly.
 type Header struct {
-	PageSize         int            // offset 32 (encoded; 65536 stored as 1)
-	FormatWrite      byte           // offset 34
-	FormatRead       byte           // offset 35
-	ChangeCounter    uint32         // offset 36
-	PageCount        uint32         // offset 40 (valid iff VersionValidFor==ChangeCounter)
-	FreelistTrunk    PageNo         // offset 44
-	FreelistCount    uint32         // offset 48
-	CatalogRoot      PageNo         // offset 52
-	CollectionCount  uint32         // offset 56
-	SchemaCookie     uint32         // offset 60
-	ApplicationID    uint32         // offset 64
-	UserVersion      uint32         // offset 68
-	Flags            byte           // offset 72
-	Encryption       EncryptionKind // offset 73
-	TextEncoding     byte           // offset 74 (0 = UTF-8)
-	Checksum         ChecksumAlgo   // offset 75
-	ReservedPerPage  byte           // offset 76
-	VersionValidFor  uint32         // offset 80
-	TxnHighWater     uint64         // offset 84
-	HeaderChecksum   uint32         // offset 92
+	PageSize        int            // offset 32 (encoded; 65536 stored as 1)
+	FormatWrite     byte           // offset 34
+	FormatRead      byte           // offset 35
+	ChangeCounter   uint32         // offset 36
+	PageCount       uint32         // offset 40 (valid iff VersionValidFor==ChangeCounter)
+	FreelistTrunk   PageNo         // offset 44
+	FreelistCount   uint32         // offset 48
+	CatalogRoot     PageNo         // offset 52
+	CollectionCount uint32         // offset 56
+	SchemaCookie    uint32         // offset 60
+	ApplicationID   uint32         // offset 64
+	UserVersion     uint32         // offset 68
+	Flags           byte           // offset 72
+	Encryption      EncryptionKind // offset 73
+	TextEncoding    byte           // offset 74 (0 = UTF-8)
+	Checksum        ChecksumAlgo   // offset 75
+	ReservedPerPage byte           // offset 76
+	VersionValidFor uint32         // offset 80
+	TxnHighWater    uint64         // offset 84
+	HeaderChecksum  uint32         // offset 92
 }
 
 // UsableBody returns the number of bytes available for a page body after the

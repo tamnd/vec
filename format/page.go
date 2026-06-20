@@ -7,22 +7,22 @@ import "encoding/binary"
 type PageType byte
 
 const (
-	PageFree          PageType = 0x00 // freelist leaf page (spec 03 §11)
-	PageFreelistTrunk PageType = 0x01 // freelist trunk page
-	PageCatalog       PageType = 0x02 // catalog/schema page (spec 03 §9)
-	PageBTreeInterior PageType = 0x03 // secondary-index B-tree interior node
-	PageBTreeLeaf     PageType = 0x04 // secondary-index B-tree leaf node
-	PageVectorSegment PageType = 0x05 // fixed-stride columnar vector segment (§7)
+	PageFree           PageType = 0x00 // freelist leaf page (spec 03 §11)
+	PageFreelistTrunk  PageType = 0x01 // freelist trunk page
+	PageCatalog        PageType = 0x02 // catalog/schema page (spec 03 §9)
+	PageBTreeInterior  PageType = 0x03 // secondary-index B-tree interior node
+	PageBTreeLeaf      PageType = 0x04 // secondary-index B-tree leaf node
+	PageVectorSegment  PageType = 0x05 // fixed-stride columnar vector segment (§7)
 	PageVectorOverflow PageType = 0x06 // overflow page for wide vectors (§7.6)
-	PageHNSWGraph     PageType = 0x07 // HNSW node records + neighbor lists (§10.1)
-	PageIVFCentroid   PageType = 0x08 // IVF centroid table page (§10.2)
-	PageIVFPosting    PageType = 0x09 // IVF posting (inverted) list page (§10.2)
-	PagePQCodebook    PageType = 0x0A // PQ/OPQ codebook page (§10.3)
-	PageDiskANNGraph  PageType = 0x0B // DiskANN fixed-degree graph block (§10.4)
-	PageMetaColumn    PageType = 0x0C // metadata column-store page (§8)
-	PageMetaOverflow  PageType = 0x0D // overflow for variable-length metadata (§8.4)
-	PagePtrMap        PageType = 0x0E // pointer-map page for vacuum/relocation (§12)
-	PageBlob          PageType = 0x0F // large-object blob page (§12)
+	PageHNSWGraph      PageType = 0x07 // HNSW node records + neighbor lists (§10.1)
+	PageIVFCentroid    PageType = 0x08 // IVF centroid table page (§10.2)
+	PageIVFPosting     PageType = 0x09 // IVF posting (inverted) list page (§10.2)
+	PagePQCodebook     PageType = 0x0A // PQ/OPQ codebook page (§10.3)
+	PageDiskANNGraph   PageType = 0x0B // DiskANN fixed-degree graph block (§10.4)
+	PageMetaColumn     PageType = 0x0C // metadata column-store page (§8)
+	PageMetaOverflow   PageType = 0x0D // overflow for variable-length metadata (§8.4)
+	PagePtrMap         PageType = 0x0E // pointer-map page for vacuum/relocation (§12)
+	PageBlob           PageType = 0x0F // large-object blob page (§12)
 )
 
 // String renders a PageType for diagnostics and the verifier.
@@ -80,9 +80,9 @@ const (
 
 // Common page header flag bits (spec 03 §6.1, field at offset 1).
 const (
-	PageFlagSlotted    = 1 << 0 // slotted (variable-length) layout
+	PageFlagSlotted      = 1 << 0 // slotted (variable-length) layout
 	PageFlagOverflowCont = 1 << 1 // overflow continuation page
-	PageFlagCompressed = 1 << 2 // compressed body
+	PageFlagCompressed   = 1 << 2 // compressed body
 )
 
 // PageHeader is the decoded 32-byte common page header (spec 03 §6.1).
