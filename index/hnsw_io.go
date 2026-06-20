@@ -156,6 +156,16 @@ func (r *reader) u32() uint32 {
 	return v
 }
 
+func (r *reader) u8() byte {
+	if r.off+1 > len(r.b) {
+		r.err = true
+		return 0
+	}
+	v := r.b[r.off]
+	r.off++
+	return v
+}
+
 func (r *reader) u64() uint64 {
 	if r.off+8 > len(r.b) {
 		r.err = true

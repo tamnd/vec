@@ -87,12 +87,14 @@ type BuildParams struct {
 	NaiveSelect    bool    // use naive kNN selection instead of the heuristic
 }
 
-// SearchParams carries query-time knobs (spec 07 §1.3).
+// SearchParams carries query-time knobs (spec 07 §1.3, spec 08 §5.5, §9.5).
 type SearchParams struct {
-	EfSearch      int  // candidate pool size (default 50)
+	EfSearch      int  // HNSW candidate pool size (default 50)
 	MaxCandidates int  // hard cap before rerank (default 2*k)
 	UseRerank     bool // rerank top candidates with full-precision vectors
 	RerankFactor  int  // rerank this many * k candidates (default 3)
+	NProbe        int  // IVF/SPANN: lists to probe (default 16, spec 08 §5.3)
+	BeamWidth     int  // DiskANN: beam width (default 64, spec 08 §9.5)
 }
 
 // IndexStats is a snapshot of index counters (spec 07 §1.3).
