@@ -132,7 +132,7 @@ func (e *Engine) appendPoint(txn Txn, c *collection, id PointID, vec []float32, 
 	}
 	txn.onCommit(func(seq mvcc.CommitSeq) { seg.version[slotPos] = seq })
 	txn.onAbort(func() {
-		c.idmap.tombstone(id)
+		_ = c.idmap.tombstone(id)
 		delete(c.idmap.dead, id)
 		seg.tomb[slotPos>>6] &^= 1 << (slotPos & 63)
 		if seg.nextPos == slotPos+1 {
@@ -193,7 +193,9 @@ func (e *Engine) Upsert(txn Txn, collID uint64, id PointID, vec []float32, meta 
 		di, _ := c.segBySeq(segSeq)
 		old := c.segs[di]
 		old.tombstone(slotPos)
-		c.idmap.tombstone(id)
+		// The id is live here (ForwardLookup above succeeded), so tombstone
+		// cannot return ErrNotFound; the slot move is what matters.
+		_ = c.idmap.tombstone(id)
 		txn.onAbort(func() {
 			old.tomb[slotPos>>6] &^= 1 << (slotPos & 63)
 			old.liveCount++

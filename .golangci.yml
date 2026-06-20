@@ -1,0 +1,18 @@
+version: "2"
+
+# The engine is built bottom-up, one subsystem per milestone, so some helpers
+# and fields land a milestone before the code that calls them. The unused linter
+# would flag those forward references as dead code, so it is off while the build
+# is in progress; every other standard linter stays on to catch real defects.
+# Re-enable unused once the db, cli, and server layers are wired.
+linters:
+  default: standard
+  disable:
+    - unused
+  exclusions:
+    rules:
+      # Tests open and close engines and transactions for their side effects; an
+      # unchecked Close or Abort in a test is not a defect worth failing CI over.
+      - path: _test\.go
+        linters:
+          - errcheck

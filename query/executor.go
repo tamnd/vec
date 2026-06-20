@@ -221,7 +221,7 @@ func drive(ec *ExecContext, root physicalOp) ([]Row, bool, string, error) {
 	if err := root.Open(ec); err != nil {
 		return nil, false, "", err
 	}
-	defer root.Close()
+	defer func() { _ = root.Close() }()
 
 	var rows []Row
 	partial := false

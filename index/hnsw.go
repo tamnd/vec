@@ -291,8 +291,10 @@ func (h *HNSW) insertLocked(pos uint32, level int) {
 			h.linkBack(nb, pos, layer, maxM)
 		}
 		if len(candidates) > 0 {
+			// Thread the nearest candidate as the entry point for the next layer
+			// down. Only the position carries over; the lower layer recomputes
+			// distances inside searchLayer.
 			cur = candidates[0].Position
-			curDist = candidates[0].Distance
 		}
 	}
 
