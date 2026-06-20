@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/tamnd/vector/mvcc"
+import "github.com/tamnd/vec/mvcc"
 
 // defaultTombstoneRatio is the compaction trigger fraction (spec 04 §9.3): when a
 // collection's tombstones exceed this share of total points, compaction reclaims

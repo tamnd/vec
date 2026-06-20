@@ -1,6 +1,6 @@
 package catalog
 
-import "github.com/tamnd/vector/distance"
+import "github.com/tamnd/vec/distance"
 
 // ElementType is the stored element representation of a vector column (spec 02 §4.3).
 type ElementType uint8

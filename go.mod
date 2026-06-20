@@ -1,3 +1,3 @@
-module github.com/tamnd/vector
+module github.com/tamnd/vec
 
 go 1.23

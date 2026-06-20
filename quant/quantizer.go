@@ -14,7 +14,7 @@ package quant
 import (
 	"errors"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // Errors returned by training and codebook decoding.

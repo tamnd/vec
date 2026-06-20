@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/storage"
 )
 
 // defaultSegmentCapacity is the per-segment point capacity passed to the engine

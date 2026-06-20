@@ -18,7 +18,7 @@ import (
 	"encoding/binary"
 	"hash/crc64"
 
-	"github.com/tamnd/vector/vfs"
+	"github.com/tamnd/vec/vfs"
 )
 
 // FrameType tags each WAL frame (spec 05).

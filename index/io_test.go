@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // memPageStore is an in-memory PageStore for persistence tests.

@@ -5,10 +5,10 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/hybrid"
-	"github.com/tamnd/vector/index"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/hybrid"
+	"github.com/tamnd/vec/index"
+	"github.com/tamnd/vec/storage"
 )
 
 const (

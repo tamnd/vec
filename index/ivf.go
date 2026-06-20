@@ -7,8 +7,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/quant"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/quant"
 )
 
 // defaultNProbe is the IVF probe count when SearchParams.NProbe is unset

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/storage"
 )
 
 // planKey identifies a structurally equivalent bound query for the plan cache

@@ -14,8 +14,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/quant"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/quant"
 )
 
 // Metric is the distance metric an index ranks by (spec 07 §1.3).

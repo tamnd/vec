@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/quant"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/quant"
 )
 
 // trainPQForTest trains a PQ codec over vecs for navigation-codec tests.

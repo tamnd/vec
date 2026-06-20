@@ -3,8 +3,8 @@ package query
 import (
 	"container/heap"
 
-	"github.com/tamnd/vector/index"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/index"
+	"github.com/tamnd/vec/storage"
 )
 
 // Batch is the columnar unit that flows between operators (spec 10 §6.2). The

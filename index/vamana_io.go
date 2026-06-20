@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"math"
 
-	"github.com/tamnd/vector/quant"
+	"github.com/tamnd/vec/quant"
 )
 
 // vamanaMagic guards a Vamana/DiskANN index blob (spec 08 §18.1). "VAM1".

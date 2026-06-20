@@ -39,4 +39,4 @@ Implementation in progress, tracking the design specification in `~/notes/Spec/2
 
 ## Repository
 
-Public, `github.com/tamnd/vector`, binary `vec`, module `github.com/tamnd/vector`. Pure Go, Go 1.23, no cgo on the build path.
+Public, `github.com/tamnd/vec`, binary `vec`, module `github.com/tamnd/vec`. Pure Go, Go 1.23, no cgo on the build path.

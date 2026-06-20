@@ -3,7 +3,7 @@ package quant
 import (
 	"math"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // BinaryQuantizer maps each dimension to a single bit by thresholding at zero (or

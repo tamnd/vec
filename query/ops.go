@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/index"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/index"
+	"github.com/tamnd/vec/storage"
 )
 
 // physicalOp is the vectorized operator interface (spec 10 §6.2). Open initializes

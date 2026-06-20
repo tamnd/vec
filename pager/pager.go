@@ -18,8 +18,8 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/tamnd/vector/format"
-	"github.com/tamnd/vector/vfs"
+	"github.com/tamnd/vec/format"
+	"github.com/tamnd/vec/vfs"
 )
 
 // Intent declares whether a pinned frame will be read or written.

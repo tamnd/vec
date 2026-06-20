@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/tamnd/vector/mvcc"
+import "github.com/tamnd/vec/mvcc"
 
 // segment is one fixed-stride columnar vector segment (spec 04 §3). It holds the
 // single copy of capacity slots' worth of vectors in one contiguous byte run, plus

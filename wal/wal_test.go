@@ -3,7 +3,7 @@ package wal
 import (
 	"testing"
 
-	"github.com/tamnd/vector/vfs"
+	"github.com/tamnd/vec/vfs"
 )
 
 func TestLogCommitRecover(t *testing.T) {

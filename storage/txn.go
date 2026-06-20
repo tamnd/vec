@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/tamnd/vector/mvcc"
+import "github.com/tamnd/vec/mvcc"
 
 // txn is one storage transaction (spec 04 §13.1, spec 06). Writes apply to the
 // in-memory structures immediately but are stamped with version 0 until commit;

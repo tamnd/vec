@@ -3,8 +3,8 @@ package pager
 import (
 	"testing"
 
-	"github.com/tamnd/vector/format"
-	"github.com/tamnd/vector/vfs"
+	"github.com/tamnd/vec/format"
+	"github.com/tamnd/vec/vfs"
 )
 
 func TestCreateOpenRoundTrip(t *testing.T) {

@@ -4,7 +4,7 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // PQCodebook stores the m per-subspace k-means codebooks for product

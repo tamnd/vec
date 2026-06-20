@@ -4,9 +4,9 @@ import (
 	"context"
 	"sync"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/index"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/index"
+	"github.com/tamnd/vec/storage"
 )
 
 // Collection is the executor's binding to one collection's physical resources

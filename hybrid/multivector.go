@@ -4,8 +4,8 @@ import (
 	"context"
 	"math"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/index"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/index"
 )
 
 // MultiVecIndex implements approximate ColBERT MaxSim retrieval (spec 11 §12). A

@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"math"
 
-	"github.com/tamnd/vector/quant"
+	"github.com/tamnd/vec/quant"
 )
 
 // ivfMagic guards an IVF index blob (spec 08 §18.1, blob form of the catalog

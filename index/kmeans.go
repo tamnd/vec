@@ -4,7 +4,7 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // trainCentroids fits k coarse centroids to the rows of data with k-means++ init

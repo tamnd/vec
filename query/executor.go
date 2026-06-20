@@ -7,8 +7,8 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/tamnd/vector/index"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/index"
+	"github.com/tamnd/vec/storage"
 )
 
 // Executor runs a PhysicalPlan against a collection (spec 10 §1.2). One executor is

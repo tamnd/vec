@@ -3,7 +3,7 @@ package catalog
 import (
 	"math"
 
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/storage"
 )
 
 // lowerElem maps a catalog ElementType to the storage engine's ElemType

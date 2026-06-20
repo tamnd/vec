@@ -3,8 +3,8 @@ package vectorsql
 import (
 	"testing"
 
-	"github.com/tamnd/vector/catalog"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/catalog"
+	"github.com/tamnd/vec/storage"
 )
 
 // parseStmt is a test helper that parses one statement or fails the test.

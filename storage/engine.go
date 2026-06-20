@@ -4,7 +4,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/tamnd/vector/mvcc"
+	"github.com/tamnd/vec/mvcc"
 )
 
 // Engine is the storage engine for one database (spec 04 §15.1). It owns the

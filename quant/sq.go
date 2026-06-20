@@ -1,6 +1,6 @@
 package quant
 
-import "github.com/tamnd/vector/distance"
+import "github.com/tamnd/vec/distance"
 
 // SQCodebook holds the per-dimension ranges learned for scalar quantization
 // (spec 09 §2.4). vec uses per-dimension asymmetric SQ by default: each dimension

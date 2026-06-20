@@ -3,8 +3,8 @@ package query
 import (
 	"time"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/storage"
 )
 
 // PathKind is the access path an ANN search resolves to (spec 13 §8.2).

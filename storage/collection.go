@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/tamnd/vector/distance"
+import "github.com/tamnd/vec/distance"
 
 // collection is the in-memory state of one collection (spec 04 §22, §23). It owns
 // an ordered directory of vector segments, the parallel metadata column store, and

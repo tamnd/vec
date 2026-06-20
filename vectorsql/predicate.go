@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tamnd/vector/catalog"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/catalog"
+	"github.com/tamnd/vec/storage"
 )
 
 // This file lowers a parsed WHERE expression to a storage.Predicate (spec 12 §17.4)

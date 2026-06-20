@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/mvcc"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/mvcc"
 )
 
 // PointID is the stable, application-supplied identity of a point (spec 04 §6.1).

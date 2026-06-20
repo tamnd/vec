@@ -7,7 +7,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	"github.com/tamnd/vector/quant"
+	"github.com/tamnd/vec/quant"
 )
 
 // DiskANN/Vamana defaults (spec 08 §8.2-8.3, §9.5).

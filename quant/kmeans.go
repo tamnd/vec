@@ -4,7 +4,7 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // kmeans runs Lloyd's algorithm to fit k centroids to the rows of data (spec 09

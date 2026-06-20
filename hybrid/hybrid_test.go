@@ -5,8 +5,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/tamnd/vector/distance"
-	"github.com/tamnd/vector/index"
+	"github.com/tamnd/vec/distance"
+	"github.com/tamnd/vec/index"
 )
 
 func TestStandardTokenizer(t *testing.T) {

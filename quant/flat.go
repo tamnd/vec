@@ -4,7 +4,7 @@ import (
 	"math"
 	"unsafe"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // FlatQuantizer is the identity codec: no compression, fp32 stored verbatim

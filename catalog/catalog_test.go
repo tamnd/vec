@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/storage"
 )
 
 // docsSchema is the worked-example documents collection (spec 02 §12.1) trimmed

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/storage"
 )
 
 // maxIDBytes limits a string or bytes point id (spec 02 §3.2).

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/tamnd/vector/hybrid"
-	"github.com/tamnd/vector/index"
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/hybrid"
+	"github.com/tamnd/vec/index"
+	"github.com/tamnd/vec/storage"
 )
 
 // rankedSourceOp emits a precomputed ranked list (positions best-first) as a one-shot

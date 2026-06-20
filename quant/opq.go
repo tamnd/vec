@@ -4,7 +4,7 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vec/distance"
 )
 
 // OPQCodebook wraps a PQ codebook with a learned orthogonal rotation R applied

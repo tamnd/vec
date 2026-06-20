@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/tamnd/vector/catalog"
-	"github.com/tamnd/vector/query"
+	"github.com/tamnd/vec/catalog"
+	"github.com/tamnd/vec/query"
 )
 
 // The binder resolves a parsed statement against the catalog and lowers it for the

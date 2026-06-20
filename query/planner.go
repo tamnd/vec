@@ -3,7 +3,7 @@ package query
 import (
 	"math"
 
-	"github.com/tamnd/vector/storage"
+	"github.com/tamnd/vec/storage"
 )
 
 // Planner turns a BoundQuery into a PhysicalPlan using a cost model with a recall

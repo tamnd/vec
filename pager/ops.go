@@ -3,8 +3,8 @@ package pager
 import (
 	"fmt"
 
-	"github.com/tamnd/vector/format"
-	"github.com/tamnd/vector/vfs"
+	"github.com/tamnd/vec/format"
+	"github.com/tamnd/vec/vfs"
 )
 
 // Get returns the frame for pgno, pinned, reading it from the main file if it is
