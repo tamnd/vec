@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/tamnd/vector/distance"
+	"github.com/tamnd/vector/hybrid"
 	"github.com/tamnd/vector/index"
 	"github.com/tamnd/vector/storage"
 )
@@ -330,5 +331,87 @@ func TestPlanRejectsBadInput(t *testing.T) {
 	}
 	if _, err := planner.Plan(BoundQuery{Vector: query[:3], K: 10, Metric: distance.L2Squared}); err != ErrDimensionMismatch {
 		t.Fatalf("short vector should be ErrDimensionMismatch, got %v", err)
+	}
+}
+
+// TestExecuteHybridFusion drives the dense-plus-lexical fusion path: a dense plan
+// fused with an extra ranked list that strongly boosts one known position. The fused
+// result must surface that position and the FuseCombined stat must be populated.
+func TestExecuteHybridFusion(t *testing.T) {
+	coll, vecs, positions := buildHarness(t, 6000, 9)
+	planner := NewPlanner(coll, 16)
+	exec := NewExecutor(coll)
+
+	// Query with an existing point's own vector so its position is the dense top hit.
+	target := 1234
+	query := vecs[target]
+	plan, err := planner.Plan(BoundQuery{Vector: query, K: 10, Metric: distance.L2Squared, EfSearch: 200})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// An extra modality list that also ranks the target position first.
+	extra := []hybrid.ScoredPos{
+		{Pos: positions[target], Score: 100},
+		{Pos: positions[target+1], Score: 50},
+	}
+	rs, err := exec.ExecuteHybrid(context.Background(), HybridRequest{
+		Plan:   plan,
+		Vector: query,
+		Extra:  [][]hybrid.ScoredPos{extra},
+		Method: hybrid.FusionRRF,
+		RRFK:   hybrid.DefaultRRFK,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rs.Rows) == 0 {
+		t.Fatal("expected fused rows")
+	}
+	if rs.Rows[0].PointID != storage.PointID(target+1) {
+		t.Fatalf("expected target point %d fused first, got %d", target+1, rs.Rows[0].PointID)
+	}
+	if rs.Stats.FuseCombined == 0 {
+		t.Fatal("FuseCombined stat should be populated")
+	}
+}
+
+// TestExecuteHybridPostFilter checks that a post-filter predicate prunes the fused
+// result to matching positions only.
+func TestExecuteHybridPostFilter(t *testing.T) {
+	coll, vecs, _ := buildHarness(t, 6000, 11)
+	planner := NewPlanner(coll, 16)
+	exec := NewExecutor(coll)
+
+	query := vecs[42]
+	plan, err := planner.Plan(BoundQuery{
+		Vector:    query,
+		K:         10,
+		Metric:    distance.L2Squared,
+		EfSearch:  200,
+		Predicate: storage.Compare{Col: tagCol, Op: storage.OpEq, Lit: storage.Text("odd")},
+		Project:   []string{"tag"},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	// Force the post-filter strategy so fusion runs before the predicate prune.
+	plan.Filter = FilterPost
+	rs, err := exec.ExecuteHybrid(context.Background(), HybridRequest{
+		Plan:   plan,
+		Vector: query,
+		Method: hybrid.FusionRRF,
+		RRFK:   hybrid.DefaultRRFK,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(rs.Rows) == 0 {
+		t.Fatal("expected fused rows")
+	}
+	for _, r := range rs.Rows {
+		if tv, ok := r.Meta["tag"]; !ok || tv.S != "odd" {
+			t.Fatalf("post-filter leaked non-odd row: %+v", r.Meta)
+		}
 	}
 }
