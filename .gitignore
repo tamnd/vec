@@ -1,0 +1,14 @@
+# Build artifacts
+/vec
+/dist/
+*.test
+*.out
+
+# Database sidecars produced by tests and local runs
+*.vec
+*.vec-wal
+*.vec-shm
+
+# Editor and OS noise
+.DS_Store
+*.swp
