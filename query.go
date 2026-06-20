@@ -332,6 +332,10 @@ func (r Result) Column(name string) (Value, bool) {
 	return v, ok
 }
 
+// Meta returns the projected metadata columns of the result keyed by name. The CLI
+// uses it to render a result row without knowing the projection in advance.
+func (r Result) Meta() map[string]Value { return r.columns }
+
 // Vector returns a requested stored vector by column name.
 func (r Result) Vector(column string) (Vector, bool) {
 	if r.Point.Vectors == nil {
