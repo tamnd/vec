@@ -9,6 +9,7 @@ import (
 
 	"github.com/tamnd/vec/catalog"
 	"github.com/tamnd/vec/index"
+	"github.com/tamnd/vec/obs"
 	"github.com/tamnd/vec/query"
 	"github.com/tamnd/vec/storage"
 )
@@ -28,6 +29,11 @@ type DB struct {
 	mu     sync.RWMutex
 	colls  map[string]*collState
 	closed bool
+
+	// metrics is the observability registry (spec 18). It is created on first use
+	// by Metrics so an embedded caller that never asks for metrics pays nothing.
+	metricsOnce sync.Once
+	metrics     *obs.Metrics
 
 	// writeMu enforces the single-writer model (spec 14 §11.1): one writable Txn
 	// at a time across the whole database; readers never take it.
@@ -129,6 +135,14 @@ func parseDSN(dsn string) (string, openConfig, error) {
 
 // Path returns the path or DSN the database was opened with.
 func (db *DB) Path() string { return db.path }
+
+// Metrics returns the database's observability registry (spec 18 §1.3). The same
+// instance backs the library hooks and the server's /metrics endpoint, so there
+// is one set of counters and no double count. It is created on first use.
+func (db *DB) Metrics() *obs.Metrics {
+	db.metricsOnce.Do(func() { db.metrics = obs.NewMetrics() })
+	return db.metrics
+}
 
 // Close closes the database; it must be called exactly once (spec 14 §2.6).
 func (db *DB) Close() error {
