@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/tamnd/vec/catalog"
+	"github.com/tamnd/vec/crypto"
 	"github.com/tamnd/vec/index"
 	"github.com/tamnd/vec/query"
 	"github.com/tamnd/vec/storage"
@@ -24,6 +25,12 @@ type DB struct {
 
 	engine *storage.Engine
 	cat    *catalog.Catalog
+
+	// crypt is the page encryption hook (spec 23 §4.2). It is crypto.NoCrypto for
+	// an unencrypted database, so the hot path pays nothing. desc is the key
+	// descriptor for an encrypted database, used by the key-management methods.
+	crypt crypto.Crypto
+	desc  *crypto.Descriptor
 
 	mu     sync.RWMutex
 	colls  map[string]*collState
@@ -97,6 +104,10 @@ func openWith(path string, cfg openConfig) (*DB, error) {
 	if cfg.logger == nil {
 		cfg.logger = DefaultLogger
 	}
+	crypt, desc, err := buildCrypto(cfg)
+	if err != nil {
+		return nil, err
+	}
 	db := &DB{
 		cfg:        cfg,
 		path:       path,
@@ -105,6 +116,8 @@ func openWith(path string, cfg openConfig) (*DB, error) {
 		colls:      make(map[string]*collState),
 		persistent: make(map[string]string),
 		session:    make(map[string]string),
+		crypt:      crypt,
+		desc:       desc,
 	}
 	// Options that named knobs through ParseOptions/WithPragma are applied as
 	// persistent-runtime PRAGMAs at open time (spec 22 §22.3 step 5).
@@ -115,6 +128,48 @@ func openWith(path string, cfg openConfig) (*DB, error) {
 		return nil, err
 	}
 	return db, nil
+}
+
+// buildCrypto resolves the encryption options into a page-encryption hook (spec
+// 23 §3, §4.2). With no passphrase or key it returns crypto.NoCrypto, so an
+// unencrypted database has no crypto on the read or write path. With a secret it
+// derives the master key, builds the key descriptor, and returns a PageEncryptor.
+//
+// The descriptor and encryptor are real and exercised by the key-management
+// methods. Writing encrypted pages and the descriptor to a file lands with the
+// on-disk pager; this build is process-resident, so a new database starts with a
+// fresh descriptor each open and there is no stored header to verify against yet.
+func buildCrypto(cfg openConfig) (crypto.Crypto, *crypto.Descriptor, error) {
+	cipher := cfg.encCipher
+	if cipher == 0 {
+		cipher = crypto.CipherAES256GCM
+	}
+	switch {
+	case cfg.encKey != nil:
+		desc, mk, err := crypto.NewDescriptorRaw(cfg.encKey.Bytes(), cipher)
+		if err != nil {
+			return nil, nil, err
+		}
+		enc, err := crypto.OpenWithRawKey(desc, mk)
+		crypto.Zeroize(mk)
+		if err != nil {
+			return nil, nil, err
+		}
+		return enc, desc, nil
+	case cfg.encPassphrase != "":
+		desc, mk, err := crypto.NewDescriptor(cfg.encPassphrase.Reveal(), cipher)
+		if err != nil {
+			return nil, nil, err
+		}
+		crypto.Zeroize(mk)
+		enc, err := crypto.OpenWithPassphrase(desc, cfg.encPassphrase.Reveal())
+		if err != nil {
+			return nil, nil, err
+		}
+		return enc, desc, nil
+	default:
+		return crypto.NoCrypto{}, nil, nil
+	}
 }
 
 // parseDSN extracts the file path and option overrides from a DSN (spec 14 §2.5).
