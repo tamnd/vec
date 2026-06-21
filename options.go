@@ -6,6 +6,8 @@ import (
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/tamnd/vec/crypto"
 )
 
 // SyncLevel controls how aggressively the WAL is flushed to stable storage on
@@ -55,6 +57,12 @@ type openConfig struct {
 	tracer          Tracer
 	metrics         MetricSink
 	progress        func(IndexBuildStats)
+
+	// encryption inputs (spec 23 §3). At most one of encPassphrase / encKey is
+	// set; encCipher selects the page cipher and defaults to AES-256-GCM.
+	encPassphrase Passphrase
+	encKey        EncryptionKey
+	encCipher     crypto.Cipher
 }
 
 // defaultConfig returns the baseline configuration before options are applied
@@ -113,6 +121,30 @@ func WithMetrics(m MetricSink) Option { return func(c *openConfig) { c.metrics =
 // WithProgress registers an index-build progress callback.
 func WithProgress(fn func(IndexBuildStats)) Option {
 	return func(c *openConfig) { c.progress = fn }
+}
+
+// WithPassphrase enables at-rest encryption with a passphrase (spec 23 §3). The
+// master key is derived with Argon2id; opening the same database later needs the
+// same passphrase, and a wrong one fails with ErrWrongPassphrase before any data
+// page is read.
+func WithPassphrase(p Passphrase) Option {
+	return func(c *openConfig) { c.encPassphrase = p; c.encKey = nil }
+}
+
+// WithEncryptionKey enables at-rest encryption with a caller-supplied 32-byte raw
+// key (spec 23 §3), for deployments that manage keys in an external KMS or HSM and
+// inject the key at open time. The key is used as the master key directly with no
+// passphrase KDF.
+func WithEncryptionKey(key EncryptionKey) Option {
+	return func(c *openConfig) { c.encKey = key; c.encPassphrase = "" }
+}
+
+// WithCipher selects the page cipher for a newly created encrypted database (spec
+// 23 §2.2). The default is AES-256-GCM; ChaCha20-Poly1305 is the choice for hosts
+// without AES hardware acceleration. The setting is ignored when opening an
+// existing encrypted database, which uses the cipher recorded in its header.
+func WithCipher(c crypto.Cipher) Option {
+	return func(cfg *openConfig) { cfg.encCipher = c }
 }
 
 // Logger receives internal log events (spec 14 §12.2). Implement it to route
