@@ -63,6 +63,25 @@ type openConfig struct {
 	encPassphrase Passphrase
 	encKey        EncryptionKey
 	encCipher     crypto.Cipher
+
+	// pragmas carries knobs set through ParseOptions or WithPragma in their
+	// canonical string form. Open applies them as persistent-runtime PRAGMAs
+	// (spec 22 §26).
+	pragmas map[string]string
+	// pragmaErr holds the first error a WithPragma option hit while validating;
+	// Open returns it before touching any data (spec 22 §26.4).
+	pragmaErr error
+}
+
+// setPragma records a canonical knob value on the config, allocating the map on
+// first use. It also reflects the handful of knobs that back a live config field
+// so the open-time engine state matches the requested value.
+func (c *openConfig) setPragma(name, canonical string) {
+	if c.pragmas == nil {
+		c.pragmas = make(map[string]string)
+	}
+	c.pragmas[name] = canonical
+	applyLiveKnob(c, name, canonical)
 }
 
 // defaultConfig returns the baseline configuration before options are applied

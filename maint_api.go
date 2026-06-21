@@ -58,6 +58,9 @@ func (db *DB) ExecTxn(ctx context.Context, txn *Txn, sql string) (*Rows, error) 
 	if err != nil {
 		return nil, mapSQLErr(err)
 	}
+	if pr, ok := stmt.(*vectorsql.PragmaStmt); ok {
+		return db.execPragma(ctx, pr)
+	}
 	sel, ok := stmt.(*vectorsql.SelectStmt)
 	if !ok {
 		return nil, errUnsupported // DDL/DML use the typed API in this build
@@ -155,21 +158,5 @@ func (db *DB) Checkpoint(ctx context.Context, mode CheckpointMode) (CheckpointSt
 	return CheckpointStats{Mode: mode}, nil
 }
 
-// Pragma reads or sets a database knob by name (spec 14 §15). An empty value reads
-// the current setting; a non-empty value sets it. Unknown pragmas are an error.
-func (db *DB) Pragma(ctx context.Context, name, value string) (string, error) {
-	switch name {
-	case "page_size":
-		return fmt.Sprintf("%d", db.cfg.pageSize), nil
-	case "cache_size":
-		return fmt.Sprintf("%d", db.cfg.cacheBytes), nil
-	case "busy_timeout":
-		return db.cfg.busyTimeout.String(), nil
-	case "mmap":
-		return fmt.Sprintf("%t", db.cfg.mmap), nil
-	case "synchronous":
-		return db.cfg.sync.String(), nil
-	default:
-		return "", fmt.Errorf("vec: pragma %q: %w", name, ErrUnknownParam)
-	}
-}
+// The Pragma command surface lives in pragma.go (spec 22 §19); it reads and sets
+// the full knob catalogue defined in the config package.
