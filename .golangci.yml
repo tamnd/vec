@@ -9,6 +9,15 @@ linters:
   default: standard
   disable:
     - unused
+  settings:
+    errcheck:
+      # The CLI writes results and prompts to an io.Writer it does not own. A failed
+      # write to stdout has nowhere useful to go, so the print family is exempt; every
+      # other unchecked error still fails the build.
+      exclude-functions:
+        - fmt.Fprint
+        - fmt.Fprintf
+        - fmt.Fprintln
   exclusions:
     rules:
       # Tests open and close engines and transactions for their side effects; an

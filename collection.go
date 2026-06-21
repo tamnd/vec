@@ -246,6 +246,41 @@ func (c *Collection) Export(ctx context.Context, w io.Writer, opts ExportOptions
 	return errUnsupported
 }
 
+// Scan calls fn for every live point in the collection at a read snapshot taken
+// when Scan begins (spec 17 §3.1). It is the enumeration primitive the bulk dump
+// and logical export paths build on. fn returning a non-nil error stops the scan
+// and that error is returned. Points are visited in storage order, which is not
+// the insertion order after compaction.
+func (c *Collection) Scan(ctx context.Context, fn func(Point) error) error {
+	cs, err := c.db.state(c.name)
+	if err != nil {
+		return err
+	}
+	snap := c.db.engine.Snapshot()
+	cols := allMetaCols(cs.cc)
+	var fnErr error
+	scanErr := c.db.engine.ScanVectors(cs.cc.ID, snap, func(pos uint32, _ []float32) bool {
+		if err := ctx.Err(); err != nil {
+			fnErr = ctxErr(err)
+			return false
+		}
+		rec, err := c.db.engine.Fetch(cs.cc.ID, pos, cols, snap)
+		if err != nil {
+			fnErr = err
+			return false
+		}
+		if err := fn(pointFromRecord(cs.cc, rec)); err != nil {
+			fnErr = err
+			return false
+		}
+		return true
+	})
+	if fnErr != nil {
+		return fnErr
+	}
+	return scanErr
+}
+
 // requireWrite validates the txn is a live writable transaction and returns the
 // collection state.
 func (c *Collection) requireWrite(txn *Txn) (*collState, error) {

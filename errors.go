@@ -31,6 +31,9 @@ var (
 	ErrCanceled        = errors.New("vec: canceled")
 	ErrVersionMismatch = errors.New("vec: version mismatch")
 	ErrEncrypted       = errors.New("vec: file is encrypted")
+	ErrKeyRequired     = errors.New("vec: encryption key required")
+	ErrWrongPassphrase = errors.New("vec: authentication failed")
+	ErrNotEncrypted    = errors.New("vec: database is not encrypted")
 )
 
 // errCode maps a sentinel error to its numeric code (spec 14 §10.1, §13.3). The
@@ -79,6 +82,12 @@ func errCode(err error) int {
 		return 19
 	case errors.Is(err, ErrEncrypted):
 		return 20
+	case errors.Is(err, ErrKeyRequired):
+		return 21
+	case errors.Is(err, ErrWrongPassphrase):
+		return 22
+	case errors.Is(err, ErrNotEncrypted):
+		return 23
 	default:
 		return 99
 	}

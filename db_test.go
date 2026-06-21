@@ -217,10 +217,11 @@ func TestPragma(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Pragma: %v", err)
 	}
-	if v != "normal" {
-		t.Fatalf("synchronous = %q, want normal", v)
+	if v != "NORMAL" {
+		t.Fatalf("synchronous = %q, want NORMAL", v)
 	}
-	if _, err := db.Pragma(context.Background(), "bogus", ""); !errors.Is(err, ErrUnknownParam) {
-		t.Fatalf("unknown pragma err = %v, want ErrUnknownParam", err)
+	var un *ErrUnknownPragma
+	if _, err := db.Pragma(context.Background(), "bogus", ""); !errors.As(err, &un) {
+		t.Fatalf("unknown pragma err = %v, want ErrUnknownPragma", err)
 	}
 }
