@@ -9,6 +9,11 @@
 *.vec-wal
 *.vec-shm
 
+# Generated docs site (tago build output)
+/docs/public/
+/docs/public-pages/
+/docs/public-cf/
+
 # Editor and OS noise
 .DS_Store
 *.swp

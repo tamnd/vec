@@ -1,0 +1,10 @@
+title       = "vec"
+baseURL     = "https://vec.tamnd.com/"
+description = "vec is an embedded single-file vector database in pure Go with the look and feel of SQLite. The vectors, ANN indexes, scalar columns, catalog, and free space all live in one self-describing .vec file you open with a path and a line of code."
+contentDir  = "content"
+outputDir   = "public"
+theme       = "tago-doks"
+syntaxHighlight = "true"
+
+[params]
+github = "https://github.com/tamnd/vec"

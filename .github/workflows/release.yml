@@ -1,0 +1,112 @@
+name: release
+
+# Pushing a version tag turns the GoReleaser config (.goreleaser.yaml) into a
+# GitHub release with the archives, Linux packages (deb, rpm, apk), checksums,
+# SBOMs and a cosign signature, and pushes the multi-arch container image to
+# GHCR. Pull requests and pushes to main run `goreleaser check` only, so a
+# config that would fail a real release is caught long before the tag.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Fast gate on every PR and push: the config parses and is valid for the
+  # installed GoReleaser version. No artifacts are built here.
+  check:
+    if: github.ref_type != 'tag'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
+      - uses: goreleaser/goreleaser-action@v7.2.2
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: check
+
+  # The real release, only on a version tag.
+  release:
+    if: github.ref_type == 'tag'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub release
+      packages: write # push the image to ghcr.io
+      id-token: write # keyless cosign signing
+    env:
+      LINUX_REPO_DISPATCH_TOKEN: ${{ secrets.LINUX_REPO_DISPATCH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
+
+      # Build and ship the linux/arm64 image from the amd64 runner.
+      - uses: docker/setup-qemu-action@v4.1.0
+      - uses: docker/setup-buildx-action@v4.1.0
+      - uses: docker/login-action@v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Tools GoReleaser shells out to for signing and SBOMs.
+      # Pin cosign to the 2.x line. cosign 3.x makes the new bundle format the
+      # default, which ignores the --output-signature/--output-certificate flags
+      # the signs block uses and aborts. Pinning keeps the .sig/.pem outputs and
+      # stops the release tool from floating to a breaking latest.
+      - uses: sigstore/cosign-installer@v4.1.2
+        with:
+          cosign-release: "v2.6.3"
+      - uses: anchore/sbom-action/download-syft@v0.24.0
+
+      - uses: goreleaser/goreleaser-action@v7.2.2
+        with:
+          distribution: goreleaser
+          version: "~> v2"
+          args: release --clean
+        env:
+          # Creating the release and pushing the GHCR image use the built-in
+          # token. The package-manager publish steps each read their own secret;
+          # any that is unset leaves that manager skipped (the artifact is still
+          # produced), so the release never fails for a tap that is not set up.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HOMEBREW_TAP_GITHUB_TOKEN: ${{ secrets.HOMEBREW_TAP_GITHUB_TOKEN }}
+          SCOOP_BUCKET_GITHUB_TOKEN: ${{ secrets.SCOOP_BUCKET_GITHUB_TOKEN }}
+
+      # Rebuild the Linux apt/dnf repository with the packages just released.
+      # Skipped when the dispatch token is unset, so the release never depends on
+      # it being configured.
+      - name: Refresh the Linux package repository
+        if: env.LINUX_REPO_DISPATCH_TOKEN != ''
+        run: |
+          code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $LINUX_REPO_DISPATCH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/tamnd/linux-repo/dispatches \
+            -d '{"event_type":"package-released"}' || true)
+          if [ "$code" = "204" ]; then
+            echo "Linux repo refresh triggered"
+          else
+            echo "Linux repo refresh not accepted (HTTP $code); skipping"
+          fi

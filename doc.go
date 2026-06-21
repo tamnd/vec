@@ -29,8 +29,19 @@
 // from creation to close (spec 14 §11).
 package vec
 
-// version is the library version string (semver), returned by Version.
-const version = "0.1.0"
+// version, commit, and date carry build information. The release build sets them
+// through -ldflags -X at link time (see .goreleaser.yaml); a plain `go build`
+// leaves the defaults, so a source build reports the in-tree version with no
+// commit or date.
+var (
+	version = "0.1.0"
+	commit  = ""
+	date    = ""
+)
 
-// Version returns the vec library version string.
+// Version returns the vec library version string (semver).
 func Version() string { return version }
+
+// BuildInfo returns the version, commit, and build date. The commit and date are
+// empty for a build that was not made by the release pipeline.
+func BuildInfo() (ver, commitHash, buildDate string) { return version, commit, date }

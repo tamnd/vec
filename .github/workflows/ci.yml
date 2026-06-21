@@ -24,7 +24,7 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.0
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
@@ -32,9 +32,9 @@ jobs:
           cache: true
       - name: gofmt
         run: |
-          unformatted=$(gofmt -l .)
+          unformatted=$(gofmt -s -l .)
           if [ -n "$unformatted" ]; then
-            echo "These files need gofmt -w:"
+            echo "These files need gofmt -s -w:"
             echo "$unformatted"
             exit 1
           fi
@@ -74,13 +74,13 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.0
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
           check-latest: true
           cache: true
-      - uses: golangci/golangci-lint-action@v8
+      - uses: golangci/golangci-lint-action@v9.2.1
         with:
           version: latest
 
@@ -91,7 +91,7 @@ jobs:
   govulncheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.0
       - uses: actions/setup-go@v6
         with:
           go-version: stable
@@ -106,7 +106,7 @@ jobs:
   tidy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7.0.0
       - uses: actions/setup-go@v6
         with:
           go-version-file: go.mod
