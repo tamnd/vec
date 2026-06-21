@@ -23,8 +23,8 @@ type CSVOptions struct {
 
 // csvSource streams rows from a CSV file with a header row (spec 17 §2.2).
 type csvSource struct {
-	r          *csv.Reader
-	header     []string
+	r        *csv.Reader
+	header   []string
 	vecCol   int   // index of the single bracketed vector column, or -1
 	numbered []int // indices of a numbered vector run, in order
 	rowIdx   uint64

@@ -17,7 +17,7 @@ func gzipMagic(br *bufio.Reader) bool {
 }
 
 // stmtScanner splits a VectorSQL dump into statements at top-level semicolons. It
-// tracks single-quoted string literals (with '' escapes), double-quoted
+// tracks single-quoted string literals (a doubled quote escapes one), double-quoted
 // identifiers, and -- line comments so a semicolon inside any of those does not end
 // a statement. It reads from the underlying reader incrementally, holding at most
 // one statement in memory at a time.

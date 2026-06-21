@@ -96,13 +96,19 @@ const (
 )
 
 // NewFvecsSource builds a RowSource over a .fvecs file (float32 elements).
-func NewFvecsSource(r io.Reader) (RowSource, error) { return &xvecsSource{r: bufio.NewReaderSize(r, 1<<20), kind: fvecsKind}, nil }
+func NewFvecsSource(r io.Reader) (RowSource, error) {
+	return &xvecsSource{r: bufio.NewReaderSize(r, 1<<20), kind: fvecsKind}, nil
+}
 
 // NewBvecsSource builds a RowSource over a .bvecs file (uint8 elements).
-func NewBvecsSource(r io.Reader) (RowSource, error) { return &xvecsSource{r: bufio.NewReaderSize(r, 1<<20), kind: bvecsKind}, nil }
+func NewBvecsSource(r io.Reader) (RowSource, error) {
+	return &xvecsSource{r: bufio.NewReaderSize(r, 1<<20), kind: bvecsKind}, nil
+}
 
 // NewIvecsSource builds a RowSource over a .ivecs file (int32 elements).
-func NewIvecsSource(r io.Reader) (RowSource, error) { return &xvecsSource{r: bufio.NewReaderSize(r, 1<<20), kind: ivecsKind}, nil }
+func NewIvecsSource(r io.Reader) (RowSource, error) {
+	return &xvecsSource{r: bufio.NewReaderSize(r, 1<<20), kind: ivecsKind}, nil
+}
 
 func (s *xvecsSource) Dim() int { return s.dim }
 
