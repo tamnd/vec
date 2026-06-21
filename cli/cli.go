@@ -30,7 +30,15 @@ func run(args []string, in io.Reader, out, errOut io.Writer) int {
 		return ExitUsage
 	}
 	if cfg.showVersion {
-		fmt.Fprintln(out, "vec", vec.Version())
+		ver, commit, date := vec.BuildInfo()
+		line := "vec " + ver
+		if commit != "" {
+			line += " (" + commit + ")"
+		}
+		if date != "" {
+			line += " " + date
+		}
+		fmt.Fprintln(out, line)
 		return ExitOK
 	}
 	if cfg.showHelp {
