@@ -29,6 +29,15 @@ type DB struct {
 	colls  map[string]*collState
 	closed bool
 
+	// pragmaMu guards the runtime knob store. persistent holds catalog-tier
+	// overrides (process-resident in this build, the catalog page once the pager
+	// is wired); session holds per-connection overrides. Reads layer session over
+	// persistent over the open-time config over the compiled-in default (spec 22
+	// §1.4).
+	pragmaMu   sync.Mutex
+	persistent map[string]string
+	session    map[string]string
+
 	// writeMu enforces the single-writer model (spec 14 §11.1): one writable Txn
 	// at a time across the whole database; readers never take it.
 	writeMu sync.Mutex
@@ -89,11 +98,21 @@ func openWith(path string, cfg openConfig) (*DB, error) {
 		cfg.logger = DefaultLogger
 	}
 	db := &DB{
-		cfg:    cfg,
-		path:   path,
-		engine: storage.NewEngine(),
-		cat:    catalog.New(),
-		colls:  make(map[string]*collState),
+		cfg:        cfg,
+		path:       path,
+		engine:     storage.NewEngine(),
+		cat:        catalog.New(),
+		colls:      make(map[string]*collState),
+		persistent: make(map[string]string),
+		session:    make(map[string]string),
+	}
+	// Options that named knobs through ParseOptions/WithPragma are applied as
+	// persistent-runtime PRAGMAs at open time (spec 22 §22.3 step 5).
+	for name, value := range cfg.pragmas {
+		db.persistent[name] = value
+	}
+	if err := db.validateConfig(); err != nil {
+		return nil, err
 	}
 	return db, nil
 }
